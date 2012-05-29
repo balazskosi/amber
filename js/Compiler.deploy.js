@@ -931,6 +931,21 @@ smalltalk.DynamicDictionaryNode);
 
 
 
+smalltalk.addClass('DynamicObjectNode', smalltalk.Node, [], 'Compiler');
+smalltalk.addMethod(
+"_accept_",
+smalltalk.method({
+selector: "accept:",
+fn: function (aVisitor) {
+    var self = this;
+    smalltalk.send(aVisitor, "_visitDynamicObjectNode_", [self]);
+    return self;
+}
+}),
+smalltalk.DynamicObjectNode);
+
+
+
 smalltalk.addClass('JSStatementNode', smalltalk.Node, ['source'], 'Compiler');
 smalltalk.addMethod(
 "_accept_",
@@ -1955,6 +1970,20 @@ smalltalk.addMethod(
 "_visitDynamicDictionaryNode_",
 smalltalk.method({
 selector: "visitDynamicDictionaryNode:",
+fn: function (aNode) {
+    var self = this;
+    smalltalk.send(self['@stream'], "_nextPutAll_", ["smalltalk.HashedCollection._fromPairs_(["]);
+    smalltalk.send(smalltalk.send(aNode, "_nodes", []), "_do_separatedBy_", [function (each) {return smalltalk.send(self, "_visit_", [each]);}, function () {return smalltalk.send(self['@stream'], "_nextPutAll_", [","]);}]);
+    smalltalk.send(self['@stream'], "_nextPutAll_", ["])"]);
+    return self;
+}
+}),
+smalltalk.FunCodeGenerator);
+
+smalltalk.addMethod(
+"_visitDynamicObjectNode_",
+smalltalk.method({
+selector: "visitDynamicObjectNode:",
 fn: function (aNode) {
     var self = this;
     smalltalk.send(self['@stream'], "_nextPutAll_", ["{"]);

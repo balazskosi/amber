@@ -608,6 +608,16 @@ accept: aVisitor
 	aVisitor visitDynamicDictionaryNode: self
 ! !
 
+Node subclass: #DynamicObjectNode
+	instanceVariableNames: ''
+	package: 'Compiler'!
+
+!DynamicObjectNode methodsFor: 'not yet classified'!
+
+accept: aVisitor
+	aVisitor visitDynamicObjectNode: self
+! !
+
 Node subclass: #JSStatementNode
 	instanceVariableNames: 'source'
 	package: 'Compiler'!
@@ -1345,6 +1355,14 @@ visitDynamicArrayNode: aNode
 !
 
 visitDynamicDictionaryNode: aNode
+	stream nextPutAll: 'smalltalk.HashedCollection._fromPairs_(['.
+		aNode nodes 
+			do: [:each | self visit: each]
+			separatedBy: [stream nextPutAll: ','].
+		stream nextPutAll: '])'
+!
+
+visitDynamicObjectNode: aNode
 	stream nextPutAll: '{'.
 		aNode nodes 
 			do: [ :each | 

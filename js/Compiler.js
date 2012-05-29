@@ -1276,6 +1276,26 @@ smalltalk.DynamicDictionaryNode);
 
 
 
+smalltalk.addClass('DynamicObjectNode', smalltalk.Node, [], 'Compiler');
+smalltalk.addMethod(
+"_accept_",
+smalltalk.method({
+selector: "accept:",
+category: 'not yet classified',
+fn: function (aVisitor) {
+    var self = this;
+    smalltalk.send(aVisitor, "_visitDynamicObjectNode_", [self]);
+    return self;
+},
+args: ["aVisitor"],
+source: "accept: aVisitor\x0a\x09aVisitor visitDynamicObjectNode: self",
+messageSends: ["visitDynamicObjectNode:"],
+referencedClasses: []
+}),
+smalltalk.DynamicObjectNode);
+
+
+
 smalltalk.addClass('JSStatementNode', smalltalk.Node, ['source'], 'Compiler');
 smalltalk.addMethod(
 "_accept_",
@@ -2688,13 +2708,32 @@ selector: "visitDynamicDictionaryNode:",
 category: 'visiting',
 fn: function (aNode) {
     var self = this;
+    smalltalk.send(self['@stream'], "_nextPutAll_", ["smalltalk.HashedCollection._fromPairs_(["]);
+    smalltalk.send(smalltalk.send(aNode, "_nodes", []), "_do_separatedBy_", [function (each) {return smalltalk.send(self, "_visit_", [each]);}, function () {return smalltalk.send(self['@stream'], "_nextPutAll_", [","]);}]);
+    smalltalk.send(self['@stream'], "_nextPutAll_", ["])"]);
+    return self;
+},
+args: ["aNode"],
+source: "visitDynamicDictionaryNode: aNode\x0a\x09stream nextPutAll: 'smalltalk.HashedCollection._fromPairs_(['.\x0a\x09\x09aNode nodes \x0a\x09\x09\x09do: [:each | self visit: each]\x0a\x09\x09\x09separatedBy: [stream nextPutAll: ','].\x0a\x09\x09stream nextPutAll: '])'",
+messageSends: ["nextPutAll:", "do:separatedBy:", "nodes", "visit:"],
+referencedClasses: []
+}),
+smalltalk.FunCodeGenerator);
+
+smalltalk.addMethod(
+"_visitDynamicObjectNode_",
+smalltalk.method({
+selector: "visitDynamicObjectNode:",
+category: 'visiting',
+fn: function (aNode) {
+    var self = this;
     smalltalk.send(self['@stream'], "_nextPutAll_", ["{"]);
     smalltalk.send(smalltalk.send(aNode, "_nodes", []), "_do_separatedBy_", [function (each) {(function ($rec) {smalltalk.send($rec, "_nextPutAll_", [smalltalk.send(each, "_first", [])]);return smalltalk.send($rec, "_nextPutAll_", [": "]);}(self['@stream']));return smalltalk.send(self, "_visit_", [smalltalk.send(each, "_second", [])]);}, function () {return smalltalk.send(self['@stream'], "_nextPutAll_", [","]);}]);
     smalltalk.send(self['@stream'], "_nextPutAll_", ["}"]);
     return self;
 },
 args: ["aNode"],
-source: "visitDynamicDictionaryNode: aNode\x0a\x09stream nextPutAll: '{'.\x0a\x09\x09aNode nodes \x0a\x09\x09\x09do: [ :each | \x0a\x09\x09\x09\x09stream \x0a\x09\x09\x09\x09\x09nextPutAll: each first;\x0a\x09\x09\x09\x09\x09nextPutAll: ': '.\x0a\x09\x09\x09\x09self visit: each second ]\x0a\x09\x09\x09separatedBy: [stream nextPutAll: ','].\x0a\x09\x09stream nextPutAll: '}'",
+source: "visitDynamicObjectNode: aNode\x0a\x09stream nextPutAll: '{'.\x0a\x09\x09aNode nodes \x0a\x09\x09\x09do: [ :each | \x0a\x09\x09\x09\x09stream \x0a\x09\x09\x09\x09\x09nextPutAll: each first;\x0a\x09\x09\x09\x09\x09nextPutAll: ': '.\x0a\x09\x09\x09\x09self visit: each second ]\x0a\x09\x09\x09separatedBy: [stream nextPutAll: ','].\x0a\x09\x09stream nextPutAll: '}'",
 messageSends: ["nextPutAll:", "do:separatedBy:", "nodes", "first", "visit:", "second"],
 referencedClasses: []
 }),

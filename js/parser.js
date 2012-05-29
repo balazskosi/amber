@@ -52,6 +52,7 @@ smalltalk.parser = (function(){
         "literalArray": parse_literalArray,
         "dynamicArray": parse_dynamicArray,
         "dynamicDictionary": parse_dynamicDictionary,
+        "dynamicObject": parse_dynamicObject,
         "pseudoVariable": parse_pseudoVariable,
         "literal": parse_literal,
         "variable": parse_variable,
@@ -1167,6 +1168,72 @@ smalltalk.parser = (function(){
         if (result0 !== null) {
           result1 = parse_ws();
           if (result1 !== null) {
+            result2 = parse_expressions();
+            result2 = result2 !== null ? result2 : "";
+            if (result2 !== null) {
+              result3 = parse_ws();
+              if (result3 !== null) {
+                if (input.charCodeAt(pos) === 125) {
+                  result4 = "}";
+                  pos++;
+                } else {
+                  result4 = null;
+                  if (reportFailures === 0) {
+                    matchFailed("\"}\"");
+                  }
+                }
+                if (result4 !== null) {
+                  result0 = [result0, result1, result2, result3, result4];
+                } else {
+                  result0 = null;
+                  pos = pos1;
+                }
+              } else {
+                result0 = null;
+                pos = pos1;
+              }
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, expressions) {
+        		  return smalltalk.DynamicDictionaryNode._new()
+        			._nodes_(expressions)
+        		  })(pos0, result0[2]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
+      function parse_dynamicObject() {
+        var result0, result1, result2, result3, result4;
+        var pos0, pos1;
+        
+        pos0 = pos;
+        pos1 = pos;
+        if (input.substr(pos, 2) === "#{") {
+          result0 = "#{";
+          pos += 2;
+        } else {
+          result0 = null;
+          if (reportFailures === 0) {
+            matchFailed("\"#{\"");
+          }
+        }
+        if (result0 !== null) {
+          result1 = parse_ws();
+          if (result1 !== null) {
             result2 = parse_associations();
             result2 = result2 !== null ? result2 : "";
             if (result2 !== null) {
@@ -1205,7 +1272,7 @@ smalltalk.parser = (function(){
         }
         if (result0 !== null) {
           result0 = (function(offset, associations) {
-        	       	  return smalltalk.DynamicDictionaryNode._new()
+        	       	  return smalltalk.DynamicObjectNode._new()
         		        ._nodes_(associations)
         		  })(pos0, result0[2]);
         }
@@ -1292,15 +1359,18 @@ smalltalk.parser = (function(){
           if (result0 === null) {
             result0 = parse_literalArray();
             if (result0 === null) {
-              result0 = parse_dynamicDictionary();
+              result0 = parse_dynamicObject();
               if (result0 === null) {
-                result0 = parse_dynamicArray();
+                result0 = parse_dynamicDictionary();
                 if (result0 === null) {
-                  result0 = parse_string();
+                  result0 = parse_dynamicArray();
                   if (result0 === null) {
-                    result0 = parse_symbol();
+                    result0 = parse_string();
                     if (result0 === null) {
-                      result0 = parse_block();
+                      result0 = parse_symbol();
+                      if (result0 === null) {
+                        result0 = parse_block();
+                      }
                     }
                   }
                 }

@@ -32,8 +32,12 @@ dynamicArray   = "{" ws expressions:expressions? ws "."? "}" {
 	       	  return smalltalk.DynamicArrayNode._new()
 		        ._nodes_(expressions)
 		  }
-dynamicDictionary = "#{" ws associations: associations? ws "}" {
-	       	  return smalltalk.DynamicDictionaryNode._new()
+dynamicDictionary = "#{" ws expressions: expressions? ws "}" {
+		  return smalltalk.DynamicDictionaryNode._new()
+			._nodes_(expressions)
+		  }		  
+dynamicObject = "#{" ws associations: associations? ws "}" {
+	       	  return smalltalk.DynamicObjectNode._new()
 		        ._nodes_(associations)
 		  }
 pseudoVariable = val:(
@@ -42,7 +46,7 @@ pseudoVariable = val:(
 		/ 'nil' {return nil}) {
 			return smalltalk.ValueNode._new()._value_(val)
 		    }
-literal        = pseudoVariable / number / literalArray / dynamicDictionary / dynamicArray / string / symbol / block
+literal        = pseudoVariable / number / literalArray / dynamicObject / dynamicDictionary / dynamicArray / string / symbol / block
 
 
 variable       = identifier:varIdentifier {
